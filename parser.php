@@ -10,6 +10,12 @@ class OpenVPNClient {
     public $connectedSince;
     public $routingSince;
 
+    private $destTimeZone;
+
+    public function __construct () {
+        $this->destTimeZone = new DateTimeZone('America/Denver');
+    }
+
     public function getReadableArray () {
         return array(
             'VPN IP' => $this->vpnIp,
@@ -43,9 +49,8 @@ class OpenVPNClient {
      */
     private function dateFormat ($date) {
         $dateTime = clone($date);
-        $dateTime->setTimezone(new DateTimeZone('America/Denver'));
+        $dateTime->setTimezone($this->destTimeZone);
         return $dateTime->format(DATE_RFC1036);
-//        return date(DATE_RFC1036, $date);
     }
 }
 
@@ -54,6 +59,12 @@ class OpenVPNStatus {
     private $updated;
     private $clients;
     private $stats;
+
+    private $srcTimeZone;
+
+    public function __construct () {
+        $this->srcTimeZone = new DateTimeZone('America/New_York');
+    }
 
     public function parse () {
         $contents = $this->contents;
@@ -73,7 +84,7 @@ class OpenVPNStatus {
     private function parseUpdated ($string) {
         $updated = explode(',', trim($string));
         $updated = array_pop($updated);
-        return new DateTime($updated, new DateTimeZone('EDT'));
+        return new DateTime($updated, clone($this->srcTimeZone));
     }
 
     private function parseClients ($string) {
@@ -96,7 +107,7 @@ class OpenVPNStatus {
             // Other Fields
             $client->bytesReceived = $fields[2];
             $client->bytesSent = $fields[3];
-            $client->connectedSince = new DateTime($fields[4], new DateTimeZone('EDT'));
+            $client->connectedSince = new DateTime($fields[4], clone($this->srcTimeZone));
 
             $clients[] = $client;
         }
@@ -111,7 +122,7 @@ class OpenVPNStatus {
             $fields = str_getcsv($routingLine);
             $ip = $fields[0];
             $name = $fields[1];
-            $dateTime = new DateTime($fields[3], new DateTimeZone('EDT'));
+            $dateTime = new DateTime($fields[3], clone($this->srcTimeZone));
 
             $client = $this->findClient($name);
             if ($client) {
