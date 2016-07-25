@@ -38,7 +38,8 @@ class OpenVPNClient {
     }
 
     private function dateFormat ($date) {
-        $date = new DateTime($date);
+        $date = new DateTime();
+        $date->setTimestamp($date);
         $date->setTimezone(new DateTimeZone('America/Denver'));
         return $date->format(DATE_RFC1036);
 //        return date(DATE_RFC1036, $date);
