@@ -34,14 +34,17 @@ class OpenVPNClient {
 
         $units = array("Bytes", "KB", "MB", "GB", "TB");
         $newsize = round($bytesize, 2);
-        return ("$newsize $units[$i]");
+        return $newsize . ' ' . $units[$i];
     }
 
+    /**
+     * @param DateTime $date
+     * @return string
+     */
     private function dateFormat ($date) {
-        $date = new DateTime();
-        $date->setTimestamp($date);
-        $date->setTimezone(new DateTimeZone('America/Denver'));
-        return $date->format(DATE_RFC1036);
+        $dateTime = clone($date);
+        $dateTime->setTimezone(new DateTimeZone('America/Denver'));
+        return $dateTime->format(DATE_RFC1036);
 //        return date(DATE_RFC1036, $date);
     }
 }
@@ -66,7 +69,7 @@ class OpenVPNStatus {
     private function parseUpdated ($string) {
         $updated = explode(',', trim($string));
         $updated = array_pop($updated);
-        return strtotime($updated);
+        return new DateTime($updated, new DateTimeZone('EDT'));
     }
 
     private function parseClients ($string) {
@@ -89,7 +92,7 @@ class OpenVPNStatus {
             // Other Fields
             $client->bytesReceived = $fields[2];
             $client->bytesSent = $fields[3];
-            $client->connectedSince = strtotime($fields[4]);
+            $client->connectedSince = new DateTime($fields[4], new DateTimeZone('EDT'));
 
             $clients[] = $client;
         }
@@ -186,16 +189,16 @@ class OpenVPNStatus {
     }
 
     /**
-     * @return mixed
+     * @return DateTime
      */
     public function getUpdated () {
         return $this->updated;
     }
 
     /**
-     * @param mixed $updated
+     * @param DateTime $updated
      */
-    public function setUpdated ($updated) {
+    public function setUpdated (DateTime $updated) {
         $this->updated = $updated;
     }
 

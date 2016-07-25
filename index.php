@@ -6,8 +6,7 @@ $status->loadFromFile('/etc/openvpn/openvpn-status.log');
 $status->parse();
 
 
-$updated = new DateTime();
-$updated->setTimestamp($status->getUpdated());
+$updated = clone($status->getUpdated());
 $updated->setTimezone(new DateTimeZone('America/Denver'));
 $updated = $updated->format(DATE_RFC1036);
 
