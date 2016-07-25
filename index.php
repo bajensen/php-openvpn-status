@@ -5,6 +5,12 @@ $status = new OpenVPNStatus();
 $status->loadFromFile('/etc/openvpn/openvpn-status.log');
 $status->parse();
 
+
+$updated = new DateTime();
+$updated->setTimestamp($status->getUpdated());
+$updated->setTimezone(new DateTimeZone('America/Denver'));
+$updated = $updated->format(DATE_RFC1036);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,7 +26,7 @@ $status->parse();
 <body>
 <div class="container">
     <h1>VPN Status</h1>
-    <h4>Updated <?= date(DATE_RFC1036, $status->getUpdated()); ?></h4>
+    <h4>Updated <?= $updated ?></h4>
 
     <div class="row">
         <?php /** @var OpenVPNClient $client */
