@@ -1,27 +1,5 @@
 <?php
 
-/*
- * Sample:
-OpenVPN CLIENT LIST
-Updated,Sun Jul 24 20:59:36 2016
-Common Name,Real Address,Bytes Received,Bytes Sent,Connected Since
-piii,75.162.210.48:50048,668679,302579,Sun Jul 24 20:13:33 2016
-giraffe,45.56.27.101:58842,1886805,6567463,Sun Jul 24 13:09:27 2016
-fox,45.56.27.101:49228,162895,197968,Sun Jul 24 12:37:08 2016
-aws,54.186.235.15:42003,193113,196128,Sun Jul 24 12:37:07 2016
-zebra,75.162.210.48:49716,6879386,1686581,Sun Jul 24 12:37:08 2016
-ROUTING TABLE
-Virtual Address,Common Name,Real Address,Last Ref
-192.168.250.8,aws,54.186.235.15:42003,Sun Jul 24 13:42:16 2016
-192.168.250.12,zebra,75.162.210.48:49716,Sun Jul 24 20:34:15 2016
-192.168.250.16,fox,45.56.27.101:49228,Sun Jul 24 13:42:55 2016
-192.168.250.2,piii,75.162.210.48:50048,Sun Jul 24 20:54:37 2016
-192.168.250.4,giraffe,45.56.27.101:58842,Sun Jul 24 20:57:55 2016
-GLOBAL STATS
-Max bcast/mcast queue length,1
-END
- */
-
 class OpenVPNClient {
     public $name;
     public $realIp;
@@ -31,6 +9,37 @@ class OpenVPNClient {
     public $bytesSent;
     public $connectedSince;
     public $routingSince;
+
+    public function getReadableArray () {
+        return array(
+            'VPN IP' => $this->vpnIp,
+            'Real IP' => $this->realIp,
+            'Real Port' => $this->realPort,
+            'Bytes Received' => $this->sizeFormat($this->bytesReceived),
+            'Bytes Sent' => $this->sizeFormat($this->bytesSent),
+            'Connected Since' => $this->dateFormat($this->connectedSince),
+            'Routing Since' => $this->dateFormat($this->routingSince),
+        );
+    }
+
+    private function sizeFormat ($bytesize) {
+        $i = 0;
+        while (abs($bytesize) >= 1024) {
+            $bytesize = $bytesize / 1024;
+            $i++;
+            if ($i == 4) {
+                break;
+            }
+        }
+
+        $units = array("Bytes", "KB", "MB", "GB", "TB");
+        $newsize = round($bytesize, 2);
+        return ("$newsize $units[$i]");
+    }
+
+    private function dateFormat ($date) {
+        return date(DATE_RFC1036, $date);
+    }
 }
 
 class OpenVPNStatus {
@@ -69,7 +78,7 @@ class OpenVPNStatus {
             $client->name = $fields[0];
 
             // IP and Port
-            preg_match('/(.*):(\d)/', $fields[1], $matches);
+            preg_match('/(.*):([\d]+)/', $fields[1], $matches);
             $client->realIp = $matches[1];
             $client->realPort = $matches[2];
 
@@ -114,6 +123,20 @@ class OpenVPNStatus {
         }
 
         return false;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClients () {
+        return $this->clients;
+    }
+
+    /**
+     * @param mixed $clients
+     */
+    public function setClients ($clients) {
+        $this->clients = $clients;
     }
 
     public function loadFromFile ($fileName) {
@@ -170,20 +193,6 @@ class OpenVPNStatus {
      */
     public function setUpdated ($updated) {
         $this->updated = $updated;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getClients () {
-        return $this->clients;
-    }
-
-    /**
-     * @param mixed $clients
-     */
-    public function setClients ($clients) {
-        $this->clients = $clients;
     }
 
     /**
