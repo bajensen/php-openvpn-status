@@ -26,3 +26,8 @@ $status = new OpenVPNStatus();
 $status->loadFromString($file);
 $status->parse();
 print_r($status->getClients());
+
+foreach($status->getClients() as $client) {
+    echo $client->name . PHP_EOL;
+    print_r($client->getReadableArray());
+}

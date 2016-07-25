@@ -66,6 +66,10 @@ class OpenVPNStatus {
         $this->setStats(preg_split('/\n|\r\n?/', trim($matches[4])));
     }
 
+    /**
+     * @param $string
+     * @return DateTime
+     */
     private function parseUpdated ($string) {
         $updated = explode(',', trim($string));
         $updated = array_pop($updated);
@@ -107,7 +111,7 @@ class OpenVPNStatus {
             $fields = str_getcsv($routingLine);
             $ip = $fields[0];
             $name = $fields[1];
-            $dateTime = strtotime($fields[3]);
+            $dateTime = new DateTime($fields[3], new DateTimeZone('EDT'));
 
             $client = $this->findClient($name);
             if ($client) {
