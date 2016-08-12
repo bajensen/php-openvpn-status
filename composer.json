@@ -1,0 +1,13 @@
+{
+    "name": "bjensena/vpn",
+    "require": {
+        "predis/predis": "^1.1",
+        "geerlingguy/ping": "^1.1"
+    },
+    "authors": [
+        {
+            "name": "Brendon Jensen",
+            "email": "bjensena@byu.edu"
+        }
+    ]
+}
