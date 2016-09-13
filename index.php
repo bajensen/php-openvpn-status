@@ -42,10 +42,13 @@ $updated = $updated->format(DATE_RFC1036);
                         <span class="badge latency pull-right" data-ip="<?= $client->vpnIp; ?>">--</span>
                     </div>
                     <ul class="list-group">
-                        <?php foreach ($client->getReadableArray() as $key => $value) : ?>
+                        <?php foreach ($client->getReadableArray() as $id => $attributes) : ?>
                             <li class="list-group-item">
-                                <h4 class="list-group-item-heading"><?= $key ?>:</h4>
-                                <p class="list-group-item-text"><?= $value ?></p>
+                                <h4 class="list-group-item-heading">
+                                    <span class="glyphicon glyphicon-<?= $attributes['icon'] ?>"></span>
+                                    <?= $attributes['name'] ?>:
+                                xeit</h4>
+                                <p class="list-group-item-text"><?= $attributes['value'] ?></p>
                             </li>
                         <?php endforeach; ?>
                     </ul>

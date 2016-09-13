@@ -17,15 +17,38 @@ class OpenVPNClient {
     }
 
     public function getReadableArray () {
-        return array(
-            'VPN IP' => $this->vpnIp,
-            'Real IP' => $this->realIp,
-//            'Real Port' => $this->realPort,
-            'Bytes Received' => $this->sizeFormat($this->bytesReceived),
-            'Bytes Sent' => $this->sizeFormat($this->bytesSent),
-            'Connected Since' => $this->dateFormat($this->connectedSince),
-            'Routing Since' => $this->dateFormat($this->routingSince),
-        );
+        return [
+            'vpn_ip' => [
+                'name' => 'VPN IP',
+                'icon' => 'cloud',
+                'value' => $this->vpnIp,
+            ],
+            'real_ip' => [
+                'name' => 'Real IP',
+                'icon' => 'globe',
+                'value' => $this->realIp,
+            ],
+            'bytes_rx' => [
+                'name' => 'Bytes Received',
+                'icon' => 'cloud-upload',
+                'value' => $this->sizeFormat($this->bytesReceived),
+            ],
+            'bytes_tx' => [
+                'name' => 'Bytes Sent',
+                'icon' => 'cloud-download',
+                'value' => $this->sizeFormat($this->bytesSent),
+            ],
+            'connected_since' => [
+                'name' => 'Connected Since',
+                'icon' => 'signal',
+                'value' => $this->dateFormat($this->connectedSince),
+            ],
+            'routing_since' => [
+                'name' => 'Routing Since',
+                'icon' => 'random',
+                'value' => $this->dateFormat($this->routingSince),
+            ],
+        ];
     }
 
     private function sizeFormat ($bytesize) {
