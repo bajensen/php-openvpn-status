@@ -47,7 +47,7 @@ $updated = $updated->format(DATE_RFC1036);
                                 <h4 class="list-group-item-heading">
                                     <span class="glyphicon glyphicon-<?= $attributes['icon'] ?>"></span>
                                     <?= $attributes['name'] ?>:
-                                xeit</h4>
+                                </h4>
                                 <p class="list-group-item-text"><?= $attributes['value'] ?></p>
                             </li>
                         <?php endforeach; ?>
