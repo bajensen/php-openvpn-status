@@ -2,7 +2,7 @@
 require_once 'parser.php';
 
 $status = new OpenVPNStatus();
-$status->loadFromFile('sample.log');
+$status->loadFromFile('/etc/openvpn/openvpn-status.log');
 $status->parse();
 
 
@@ -63,7 +63,7 @@ $updated = $updated->format(DATE_RFC1036);
       
         $.get('ping.php', {'ip': ip}, function(data){
             if (data.length > 0) {
-                elem.html(data + 'ms');
+                elem.html(data + ' ms');
             }
             else {
                 elem.html('NR');
