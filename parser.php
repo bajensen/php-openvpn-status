@@ -20,7 +20,7 @@ class OpenVPNClient {
         return array(
             'VPN IP' => $this->vpnIp,
             'Real IP' => $this->realIp,
-//            'Real Port' => $this->realPort,
+            'Real Port' => $this->realPort,
             'Bytes Received' => $this->sizeFormat($this->bytesReceived),
             'Bytes Sent' => $this->sizeFormat($this->bytesSent),
             'Connected Since' => $this->dateFormat($this->connectedSince),
