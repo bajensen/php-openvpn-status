@@ -1,5 +1,5 @@
 <?php
-require_once 'parser.php';
+require 'bootstrap.php';
 
 $status = new OpenVPNStatus();
 $status->loadFromFile('/etc/openvpn/openvpn-status.log');
