@@ -1,83 +1,8 @@
 <?php
+namespace OpenVPN;
 
-class OpenVPNClient {
-    public $name;
-    public $realIp;
-    public $realPort;
-    public $vpnIp;
-    public $bytesReceived;
-    public $bytesSent;
-    public $connectedSince;
-    public $routingSince;
+class Status {
 
-    private $destTimeZone;
-
-    public function __construct () {
-        $this->destTimeZone = new DateTimeZone('America/Denver');
-    }
-
-    public function getReadableArray () {
-        return [
-            'vpn_ip' => [
-                'name' => 'VPN IP',
-                'icon' => 'cloud',
-                'value' => $this->vpnIp,
-            ],
-            'real_ip' => [
-                'name' => 'Real IP',
-                'icon' => 'globe',
-                'value' => $this->realIp,
-            ],
-            'bytes_rx' => [
-                'name' => 'Bytes Received',
-                'icon' => 'cloud-upload',
-                'value' => $this->sizeFormat($this->bytesReceived),
-            ],
-            'bytes_tx' => [
-                'name' => 'Bytes Sent',
-                'icon' => 'cloud-download',
-                'value' => $this->sizeFormat($this->bytesSent),
-            ],
-            'connected_since' => [
-                'name' => 'Connected Since',
-                'icon' => 'signal',
-                'value' => $this->dateFormat($this->connectedSince),
-            ],
-            'routing_since' => [
-                'name' => 'Routing Since',
-                'icon' => 'random',
-                'value' => $this->dateFormat($this->routingSince),
-            ],
-        ];
-    }
-
-    private function sizeFormat ($bytesize) {
-        $i = 0;
-        while (abs($bytesize) >= 1024) {
-            $bytesize = $bytesize / 1024;
-            $i++;
-            if ($i == 4) {
-                break;
-            }
-        }
-
-        $units = array("Bytes", "KB", "MB", "GB", "TB");
-        $newsize = round($bytesize, 2);
-        return $newsize . ' ' . $units[$i];
-    }
-
-    /**
-     * @param DateTime $date
-     * @return string
-     */
-    private function dateFormat ($date) {
-        $dateTime = clone($date);
-        $dateTime->setTimezone($this->destTimeZone);
-        return $dateTime->format(DATE_RFC1036);
-    }
-}
-
-class OpenVPNStatus {
     private $contents;
     private $updated;
     private $clients;
@@ -86,7 +11,7 @@ class OpenVPNStatus {
     private $srcTimeZone;
 
     public function __construct () {
-        $this->srcTimeZone = new DateTimeZone('America/New_York');
+        $this->srcTimeZone = new \DateTimeZone(\OpenVPN\Config::getValue('timezone.src'));
     }
 
     public function parse () {
@@ -102,12 +27,12 @@ class OpenVPNStatus {
 
     /**
      * @param $string
-     * @return DateTime
+     * @return \DateTime
      */
     private function parseUpdated ($string) {
         $updated = explode(',', trim($string));
         $updated = array_pop($updated);
-        return new DateTime($updated, clone($this->srcTimeZone));
+        return new \DateTime($updated, clone($this->srcTimeZone));
     }
 
     private function parseClients ($string) {
@@ -117,7 +42,7 @@ class OpenVPNStatus {
         foreach ($clientLines as $clientLine) {
             $fields = str_getcsv($clientLine);
 
-            $client = new OpenVPNClient();
+            $client = new Client();
 
             // Name
             $client->name = $fields[0];
@@ -130,7 +55,7 @@ class OpenVPNStatus {
             // Other Fields
             $client->bytesReceived = $fields[2];
             $client->bytesSent = $fields[3];
-            $client->connectedSince = new DateTime($fields[4], clone($this->srcTimeZone));
+            $client->connectedSince = new \DateTime($fields[4], clone($this->srcTimeZone));
 
             $clients[] = $client;
         }
@@ -145,7 +70,7 @@ class OpenVPNStatus {
             $fields = str_getcsv($routingLine);
             $ip = $fields[0];
             $name = $fields[1];
-            $dateTime = new DateTime($fields[3], clone($this->srcTimeZone));
+            $dateTime = new \DateTime($fields[3], clone($this->srcTimeZone));
 
             $client = $this->findClient($name);
             if ($client) {
@@ -157,10 +82,10 @@ class OpenVPNStatus {
 
     /**
      * @param string $name the common name of the client
-     * @return bool|OpenVPNClient
+     * @return bool|Client
      */
     private function findClient ($name) {
-        /** @var OpenVPNClient $client */
+        /** @var Client $client */
         foreach ($this->getClients() as $client) {
             if ($client->name == $name) {
                 return $client;
@@ -188,7 +113,7 @@ class OpenVPNStatus {
         $contents = file_get_contents($fileName);
 
         if (! $contents) {
-            throw new Exception('File not found or empty.');
+            throw new \Exception('File not found or empty.');
         }
 
         $this->contents = $contents;
@@ -198,7 +123,7 @@ class OpenVPNStatus {
         $contents = stream_get_contents($fileResource);
 
         if (! $contents) {
-            throw new Exception('Resource not available or empty.');
+            throw new \Exception('Resource not available or empty.');
         }
 
         $this->contents = $contents;
@@ -206,7 +131,7 @@ class OpenVPNStatus {
 
     public function loadFromString ($contents) {
         if (! $contents) {
-            throw new Exception('Given contents were empty.');
+            throw new \Exception('Given contents were empty.');
         }
 
         $this->contents = $contents;
@@ -227,16 +152,16 @@ class OpenVPNStatus {
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getUpdated () {
         return $this->updated;
     }
 
     /**
-     * @param DateTime $updated
+     * @param \DateTime $updated
      */
-    public function setUpdated (DateTime $updated) {
+    public function setUpdated (\DateTime $updated) {
         $this->updated = $updated;
     }
 
@@ -253,6 +178,4 @@ class OpenVPNStatus {
     public function setStats ($stats) {
         $this->stats = $stats;
     }
-
-
 }

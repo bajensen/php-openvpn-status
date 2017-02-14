@@ -3,3 +3,5 @@ composer.lock
 composer.phar
 vendor/
 deploy.php
+config/*
+!config/config-sample.php

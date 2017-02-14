@@ -1,5 +1,5 @@
 {
-    "name": "bjensena/vpn",
+    "name": "bajensen/php-openvpn-status",
     "require": {
         "geerlingguy/ping": "^1.1"
     },
@@ -8,5 +8,10 @@
             "name": "Brendon Jensen",
             "email": "bjensena@byu.edu"
         }
-    ]
+    ],
+    "autoload" : {
+        "psr-0": {
+            "OpenVPN\\": "src/"
+        }
+    }
 }

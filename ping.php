@@ -1,9 +1,9 @@
 <?php
-include('vendor/autoload.php');
+include(__DIR__ . '/bootstrap.php');
 
 $ip = $_GET['ip'];
 
-if (preg_match('/192\.168\.250\.[0-9]{0,3}/', $ip)) {
+if (preg_match(\OpenVPN\Config::getValue('allowed_ping_regex'), $ip)) {
     $pinger = new \JJG\Ping($ip);
     echo $pinger->ping();
 }

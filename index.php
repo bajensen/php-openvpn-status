@@ -1,15 +1,13 @@
 <?php
-require 'bootstrap.php';
+include(__DIR__ . '/bootstrap.php');
 
-$status = new OpenVPNStatus();
-$status->loadFromFile('/etc/openvpn/openvpn-status.log');
+$status = new OpenVPN\Status();
+$status->loadFromFile(\OpenVPN\Config::getValue('log_file'));
 $status->parse();
 
-
 $updated = clone($status->getUpdated());
-$updated->setTimezone(new DateTimeZone('America/Denver'));
+$updated->setTimezone(new DateTimeZone(\OpenVPN\Config::getValue('timezone.dst')));
 $updated = $updated->format(DATE_RFC1036);
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,7 +31,7 @@ $updated = $updated->format(DATE_RFC1036);
     <h4>Updated <?= $updated ?></h4>
     
     <div class="row">
-        <?php /** @var OpenVPNClient $client */
+        <?php /** @var OpenVPN\Client $client */
         foreach ($status->getClients() as $client) : ?>
             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
                 <div class="panel panel-default">
