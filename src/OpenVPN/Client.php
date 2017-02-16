@@ -72,6 +72,10 @@ class Client {
      * @return string
      */
     private function dateFormat ($date) {
+        if (!$date) {
+            return 'N/A';
+        }
+
         $dateTime = clone($date);
         $dateTime->setTimezone($this->destTimeZone);
         return $dateTime->format(DATE_RFC1036);

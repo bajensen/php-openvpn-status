@@ -4,4 +4,4 @@ composer.phar
 vendor/
 deploy.php
 config/*
-!config/config-sample.php
+!config/config.default.php

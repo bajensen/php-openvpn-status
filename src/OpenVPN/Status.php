@@ -44,6 +44,11 @@ class Status {
 
             $client = new Client();
 
+            // If the name is UNDEF, just ignore it
+            if ($fields[0] == 'UNDEF') {
+                continue;
+            }
+
             // Name
             $client->name = $fields[0];
 
