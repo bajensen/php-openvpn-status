@@ -65,6 +65,12 @@ class Status {
             $clients[] = $client;
         }
 
+        usort($clients, function ($a, $b) {
+            /** @var Client $a */
+            /** @var Client $b */
+            return strcmp($a->name, $b->name);
+        });
+
         return $clients;
     }
 
